@@ -23,7 +23,9 @@ router.post('/', (req, res) => {
         description,
         deadline,
         priority,
-        done
+        done,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
     };
     tasksData.tasks.push(newTask);
     res.status(201).json(newTask);
@@ -36,10 +38,19 @@ router.put('/:id', (req, res) => {
     if (taskIndex === -1) {
         return res.status(404).json({ status: 404, message: 'Task not found' });
     }
-    const updatedTask = { ...tasksData.tasks[taskIndex], ...req.body, id:id };
     tasksData.tasks[taskIndex] = updatedTask;
     res.json(updatedTask);
+    // Get the existing task
+    const existingTask = tasksData.tasks[taskIndex];
+
+    // Update only the relevant properties, including 'done'
+    const updatedTask = {
+        ...existingTask,
+        ...req.body,
+        updated_at: new Date().toISOString(),
+    };
 });
+
 //Delete a task
 router.delete('/:id', (req, res) => {
     const { id } = req.params;
@@ -50,4 +61,20 @@ router.delete('/:id', (req, res) => {
     res.status(204).send();
     tasksData.total_results--;
 });
+
+router.put('/:id', (req, res) => {
+    const { id } = req.params;
+    const taskIndex = tasksData.tasks.findIndex((task) => task.id === id);
+    if (taskIndex === -1) {
+        return res.status(404).json({ status: 404, message: 'Task not found' });
+    }
+    const updatedTask = {
+        ...tasksData.tasks[taskIndex],
+        ...req.body,
+        updated_at: new Date().toISOString(),
+    };
+    tasksData.tasks[taskIndex] = updatedTask;
+    res.json(updatedTask);
+});
+
 export default router;
