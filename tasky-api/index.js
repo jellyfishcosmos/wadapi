@@ -3,6 +3,8 @@ import express from 'express';
 import tasksRouter from './api/tasks';
 import './db';
 import usersRouter from './api/users';
+import cors from 'cors';
+
 
 
 dotenv.config();
@@ -20,6 +22,8 @@ const app = express();
 
 const port = process.env.PORT;
 app.use(express.json());
+app.use(cors());
+
 app.use('/api/tasks', tasksRouter);
 app.use('/api/users', usersRouter);
 
